@@ -1,16 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <node_data.hpp>
 #include <string>
 #include <map>
 #include <vector>
-
-struct Node_Data{
-    Node_Data(unsigned short int nid, std::string ntval, std::vector<unsigned short int> nchildren);
-    unsigned short int id;
-    std::string tval;
-    std::vector<unsigned short int> children;
-};
 
 class Tree : public sf::Drawable{
 public:

@@ -3,10 +3,6 @@
 #include <primordial.hpp>
 
 //////////////////////////////////////////////
-Node_Data::Node_Data(unsigned short int nid, std::string ntval, std::vector<unsigned short int> nchildren)
-: id{ nid }, tval{ ntval }, children{ nchildren }{}
-
-//////////////////////////////////////////////
 
 Tree::Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::RenderWindow& window)
 {
