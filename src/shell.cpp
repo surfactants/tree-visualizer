@@ -1,5 +1,4 @@
 #include <shell.hpp>
-#include <iostream>
 #include <database.hpp>
 
 Shell::Shell()
