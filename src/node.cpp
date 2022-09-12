@@ -2,9 +2,9 @@
 #include <iostream>
 #include <primordial.hpp>
 
-Tree::Node::Node(sf::Font& font, Node_Data data, std::map<unsigned short int, Node_Data>& nodes)
+Tree::Node::Node(sf::Font& font, Node_Data ndata, std::map<unsigned short int, Node_Data>& nodes)
 {
-    id = data.id;
+    id = ndata.id;
     text.setString(std::to_string(id));
     text.setFont(font);
     centerText(text);
@@ -14,7 +14,7 @@ Tree::Node::Node(sf::Font& font, Node_Data data, std::map<unsigned short int, No
     circle.setRadius(32.f);
     circle.setOrigin(32.f, 32.f);
 
-    for(const auto& c : data.children){
+    for(const auto& c : ndata.children){
         if(nodes.count(c)){
         children.push_back(new Node(font, nodes.at(c), nodes));
         child_lines.push_back(sf::RectangleShape());
@@ -23,6 +23,8 @@ Tree::Node::Node(sf::Font& font, Node_Data data, std::map<unsigned short int, No
             std::cout << "no node data found for " << id << " child " << c << '\n';
         }
     }
+
+    data = ndata.tval;
 }
 
 void Tree::Node::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -71,4 +73,67 @@ void Tree::Node::connectChildren(){
         child_lines[i].setFillColor(sf::Color(120, 60, 150));
         children[i]->connectChildren();
     }
+}
+
+void Tree::Node::checkMouse(sf::Vector2f& mpos)
+{
+    bool contains = circle.getGlobalBounds().contains(mpos);
+    if(!highlighted && contains) highlight();
+    else if(highlighted && !contains) unhighlight();
+    for(auto& c : children) c->checkMouse(mpos);
+}
+
+bool Tree::Node::isHighlighted()
+{
+    return highlighted;
+}
+
+void Tree::Node::highlight()
+{
+    highlighted = true;
+    if(!selected){
+        circle.setFillColor(sf::Color::Black);
+        text.setFillColor(sf::Color::White);
+    }
+}
+
+void Tree::Node::unhighlight()
+{
+    highlighted = false;
+    if(!selected){
+        circle.setFillColor(sf::Color::White);
+        text.setFillColor(sf::Color::Black);
+    }
+}
+
+Tree::Node* Tree::Node::checkClick()
+{
+    Node* node{ nullptr };
+    if(highlighted){
+        select();
+        node = this;
+    }
+    else if(selected) unselect();
+
+    for(const auto& c : children)
+    {
+        Node* tnode = c->checkClick();
+        if(node == nullptr && tnode != nullptr) node = tnode;
+    }
+
+    return node;
+}
+
+void Tree::Node::select()
+{
+    selected = true;
+    circle.setFillColor(sf::Color::Blue);
+    text.setFillColor(sf::Color::Red);
+}
+
+void Tree::Node::unselect()
+{
+    selected = false;
+    if(highlighted) highlight();
+    else unhighlight();
 }

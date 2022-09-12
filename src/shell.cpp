@@ -27,6 +27,7 @@ void Shell::run()
 
 void Shell::update()
 {
+    tree.update();
 }
 
 void Shell::input()

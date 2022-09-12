@@ -2,21 +2,69 @@
 #include <iostream>
 
 //////////////////////////////////////////////
+Tree_Display::Tree_Display(sf::Font& nfont, sf::RenderWindow& window)
+: font{ &nfont }
+{
 
-Tree::Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::RenderWindow& window)
+    float xp = 0.76f * window.getSize().x,
+          yp = 0.10f * window.getSize().y,
+          xs = 0.19f * window.getSize().x,
+          ys = 0.80f * window.getSize().y;
+
+    frame.setPosition(sf::Vector2f(xp, yp));
+    frame.setSize(sf::Vector2f(xs, ys));
+    frame.setFillColor(sf::Color::Green);
+
+    title.setFont(*font);
+    title.setPosition(sf::Vector2f(xp, yp));
+    title.setString("...");
+    title.setFillColor(sf::Color::Black);
+
+    text.setFont(*font);
+    text.setPosition(sf::Vector2f(xp, yp + 64.f));
+    text.setString("...");
+    text.setFillColor(sf::Color::Black);
+
+    unset();
+}
+
+void Tree_Display::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(frame, states);
+    target.draw(title, states);
+    target.draw(text, states);
+}
+
+void Tree_Display::set(std::string ntitle, std::string ntext)
+{
+    title.setString(ntitle);
+    text.setString(ntext);
+
+    //wrap
+}
+
+void Tree_Display::unset()
+{
+    title.setString("...");
+    text.setString("select a node to learn more");
+}
+
+//////////////////////////////////////////////
+Tree::Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::RenderWindow& nwindow)
+: window{ &nwindow }
 {
     title.setString("tree");
     title.setFont(font);
 
     zoom_level = 1.f;
 
-    float xp = 0.1f,
+    float xp = 0.05f,
           yp = 0.1f,
-          xs = 0.8f,
+          xs = 0.7f,
           ys = 0.8f;
 
     view.setViewport(sf::FloatRect(xp,yp,xs,ys));
-    view.setSize(sf::Vector2f(window.getSize().x*xs,window.getSize().y*ys));
+    view.setSize(sf::Vector2f(window->getSize().x*xs, window->getSize().y*ys));
     view.setCenter(sf::Vector2f(0.f, 0.f));
 
     sf::Vector2f fsize(4096.f, 4096.f);
@@ -36,14 +84,25 @@ Tree::Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::Re
 
     root->placeChildren(sf::Vector2f(0.f, 0.f));
     root->connectChildren();
+
+    display = Tree_Display(font, *window);
 }
 
 void Tree::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     target.draw(title, states);
+    target.draw(display, states);
+
     target.setView(view);
     target.draw(frame, states);
     target.draw(*root, states);
+}
+
+void Tree::update()
+{
+    sf::Vector2f mpos = window->mapPixelToCoords(sf::Mouse::getPosition(*window), view);
+
+    root->checkMouse(mpos);
 }
 
 void Tree::checkMouse(sf::Event& event){
@@ -62,15 +121,18 @@ void Tree::checkMouse(sf::Event& event){
             dragging = true;
             drag_pos = sf::Vector2f(sf::Mouse::getPosition());
         }
-    }
-
-    if(event.type == sf::Event::MouseButtonReleased){
-        if(event.mouseButton.button == sf::Mouse::Left){
-            //clickLeft();
+        else if(event.type == sf::Event::MouseButtonReleased){
+            if(event.mouseButton.button == sf::Mouse::Left){
+                Node* clicked = root->checkClick();
+                if(clicked != nullptr){
+                    display.set(std::to_string(clicked->id), clicked->data);
+                }
+                else display.unset();
+            }
         }
-    }
-    else if(event.type == sf::Event::MouseWheelScrolled){
-        zoom(event.mouseWheelScroll.delta);
+        else if(event.type == sf::Event::MouseWheelScrolled){
+            zoom(event.mouseWheelScroll.delta);
+        }
     }
 }
 
