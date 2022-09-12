@@ -127,8 +127,8 @@ Tree::Node* Tree::Node::checkClick()
 void Tree::Node::select()
 {
     selected = true;
-    circle.setFillColor(sf::Color::Blue);
-    text.setFillColor(sf::Color::Red);
+    circle.setFillColor(sf::Color(218, 168, 40));
+    text.setFillColor(sf::Color::Black);
 }
 
 void Tree::Node::unselect()

@@ -2,7 +2,8 @@
 #include <database.hpp>
 
 Shell::Shell()
-    : window{ sf::VideoMode(), "treeviz", sf::Style::Fullscreen }
+    : window{ sf::VideoMode(), "treeviz", sf::Style::Fullscreen,
+    sf::ContextSettings(0, 0, 4) }
 {
         font.loadFromFile("adventpro-bold.ttf");
 

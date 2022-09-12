@@ -2,54 +2,6 @@
 #include <iostream>
 
 //////////////////////////////////////////////
-Tree_Display::Tree_Display(sf::Font& nfont, sf::RenderWindow& window)
-: font{ &nfont }
-{
-
-    float xp = 0.76f * window.getSize().x,
-          yp = 0.10f * window.getSize().y,
-          xs = 0.19f * window.getSize().x,
-          ys = 0.80f * window.getSize().y;
-
-    frame.setPosition(sf::Vector2f(xp, yp));
-    frame.setSize(sf::Vector2f(xs, ys));
-    frame.setFillColor(sf::Color::Green);
-
-    title.setFont(*font);
-    title.setPosition(sf::Vector2f(xp, yp));
-    title.setString("...");
-    title.setFillColor(sf::Color::Black);
-
-    text.setFont(*font);
-    text.setPosition(sf::Vector2f(xp, yp + 64.f));
-    text.setString("...");
-    text.setFillColor(sf::Color::Black);
-
-    unset();
-}
-
-void Tree_Display::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    target.draw(frame, states);
-    target.draw(title, states);
-    target.draw(text, states);
-}
-
-void Tree_Display::set(std::string ntitle, std::string ntext)
-{
-    title.setString(ntitle);
-    text.setString(ntext);
-
-    //wrap
-}
-
-void Tree_Display::unset()
-{
-    title.setString("...");
-    text.setString("select a node to learn more");
-}
-
-//////////////////////////////////////////////
 Tree::Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::RenderWindow& nwindow)
 : window{ &nwindow }
 {
@@ -71,7 +23,7 @@ Tree::Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::Re
 
     frame.setSize(fsize);
     frame.setOrigin(fsize / 2.f);
-    frame.setFillColor(sf::Color(90, 10, 30));
+    frame.setFillColor(sf::Color(40, 20, 30));
     frame.setPosition(16.f, 16.f);
 
     if(nodes.count(0)){
@@ -105,7 +57,13 @@ void Tree::update()
     root->checkMouse(mpos);
 }
 
-void Tree::checkMouse(sf::Event& event){
+void Tree::checkMouse(sf::Event& event)
+{
+    if(event.type == sf::Event::MouseWheelScrolled){
+        zoom(event.mouseWheelScroll.delta);
+        return;
+    }
+
     bool dragCheck = (sf::Mouse::isButtonPressed(sf::Mouse::Right) || sf::Mouse::isButtonPressed(sf::Mouse::Middle));
 
     if(dragging){
@@ -129,9 +87,6 @@ void Tree::checkMouse(sf::Event& event){
                 }
                 else display.unset();
             }
-        }
-        else if(event.type == sf::Event::MouseWheelScrolled){
-            zoom(event.mouseWheelScroll.delta);
         }
     }
 }

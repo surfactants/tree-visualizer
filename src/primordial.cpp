@@ -83,3 +83,23 @@ sf::Vector2f calculateMoveVector(float angle, float velocity){
 int roundFloat(float f){
     return static_cast<int>(f + 0.5f);
 }
+
+void wrapText(sf::Text& text, int width){
+    std::string toWrap = text.getString();
+    std::string wrapped;
+
+    unsigned int epos = 1;
+
+    while(epos < toWrap.length()){
+        if(text.findCharacterPos(epos).x + text.getCharacterSize()*1.5 - text.findCharacterPos(0).x > width){
+            while(toWrap.at(--epos) != ' '){} //finds and deletes last space character
+            wrapped += toWrap.substr(0, epos) + "\n";
+            toWrap.erase(0, ++epos);
+            epos = 0;
+        }
+        epos++;
+    }
+    wrapped += toWrap;
+
+    text.setString(wrapped);
+}

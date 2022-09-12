@@ -110,3 +110,5 @@ T scalarProduct(const sf::Vector2<T>& v, const sf::Vector2<T>& w)
 }
 
 int roundFloat(float f);
+
+void wrapText(sf::Text& text, int width);
