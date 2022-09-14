@@ -47,7 +47,7 @@ void Tree::Node::placeChildren(sf::Vector2f pos, float angle, float slice){
 
     if(children.size() > 1) offset = slice/children.size();
 
-    angle -= (offset / 2.f) * (children.size() / 2.f);
+    angle -= (offset / 2.f) * (children.size() / 2.f + 0.5f);
 
     if(angle < 0.f) angle += 360.f;
 
@@ -67,10 +67,10 @@ void Tree::Node::connectChildren(){
         std::cout << " to child " << i << " (" << children[i]->id << ") at " << children[i]->circle.getPosition().x << ", " << children[i]->circle.getPosition().y << '\n';
         sf::Vector2f p2 = children[i]->circle.getPosition();
         child_lines[i].setPosition(p1);
-        child_lines[i].setSize(sf::Vector2f(8.f, scalarDistance(p2, p1)));
-        child_lines[i].setOrigin(sf::Vector2f(4.f, 0.f));
+        child_lines[i].setSize(sf::Vector2f(4.f, scalarDistance(p2, p1)));
+        child_lines[i].setOrigin(sf::Vector2f(2.f, 0.f));
         child_lines[i].setRotation(calculateAngle(p2, p1));
-        child_lines[i].setFillColor(sf::Color(120, 60, 150));
+        child_lines[i].setFillColor(sf::Color(90, 60, 120));
         children[i]->connectChildren();
     }
 }
@@ -127,7 +127,7 @@ Tree::Node* Tree::Node::checkClick()
 void Tree::Node::select()
 {
     selected = true;
-    circle.setFillColor(sf::Color(218, 168, 40));
+    circle.setFillColor(sf::Color(218, 188, 98));
     text.setFillColor(sf::Color::Black);
 }
 
