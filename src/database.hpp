@@ -1,8 +1,10 @@
 #pragma once
 
-#include <node_data.hpp>
-#include <map>
 #include <sqlite/sqlite3.h>
+
+#include <node_data.hpp>
+
+#include <map>
 
 class Database {
 public:

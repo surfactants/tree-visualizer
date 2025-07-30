@@ -1,19 +1,45 @@
-#include <tree.hpp>
+////////////////////////////////////////////////////////////
+// NODE
+// ----------
+// Definitions for Tree_Visualizer::Node.
+// Written by surfactants (https://github.com/surfactants).
+//
+// LICENSE: zlib (https://www.zlib.net/zlib_license.html)
+// -------
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
+#include <tree_visualizer.hpp>
 
 #include <primordial.hpp>
 
-sf::Color Tree::Node::fill_color = sf::Color::Black;
-sf::Color Tree::Node::text_color = sf::Color::White;
+sf::Color Tree_Visualizer::Node::fill_color = sf::Color::Black;
+sf::Color Tree_Visualizer::Node::text_color = sf::Color::White;
 
-sf::Color Tree::Node::hi_fill_color = sf::Color::White;
-sf::Color Tree::Node::hi_text_color = sf::Color::Black;
+sf::Color Tree_Visualizer::Node::hi_fill_color = sf::Color::White;
+sf::Color Tree_Visualizer::Node::hi_text_color = sf::Color::Black;
 
-sf::Color Tree::Node::sel_fill_color = sf::Color(218, 188, 98);
-sf::Color Tree::Node::sel_text_color = sf::Color::Black;
+sf::Color Tree_Visualizer::Node::sel_fill_color = sf::Color(218, 188, 98);
+sf::Color Tree_Visualizer::Node::sel_text_color = sf::Color::Black;
 
-sf::Color Tree::Node::line_color = sf::Color(90, 60, 120);
+sf::Color Tree_Visualizer::Node::line_color = sf::Color(90, 60, 120);
 
-Tree::Node::Node(sf::Font& font, Node_Data ndata, std::map<unsigned short int, Node_Data>& nodes)
+Tree_Visualizer::Node::Node(sf::Font& font, Node_Data ndata, std::map<unsigned short int, Node_Data>& nodes)
 {
     id = ndata.id;
     text.setString(std::to_string(id));
@@ -35,7 +61,7 @@ Tree::Node::Node(sf::Font& font, Node_Data ndata, std::map<unsigned short int, N
     data = ndata.tval;
 }
 
-void Tree::Node::placeChildren(sf::Vector2f pos, float angle, float slice)
+void Tree_Visualizer::Node::placeChildren(sf::Vector2f pos, float angle, float slice)
 {
     circle.setPosition(pos);
     text.setPosition(pos);
@@ -56,7 +82,7 @@ void Tree::Node::placeChildren(sf::Vector2f pos, float angle, float slice)
     }
 }
 
-void Tree::Node::connectChildren()
+void Tree_Visualizer::Node::connectChildren()
 {
     sf::Vector2f p1 = circle.getPosition();
 
@@ -71,7 +97,7 @@ void Tree::Node::connectChildren()
     }
 }
 
-void Tree::Node::checkMouse(const sf::Vector2f& mpos)
+void Tree_Visualizer::Node::checkMouse(const sf::Vector2f& mpos)
 {
     bool contains = circle.getGlobalBounds().contains(mpos);
 
@@ -87,7 +113,7 @@ void Tree::Node::checkMouse(const sf::Vector2f& mpos)
     }
 }
 
-void Tree::Node::greedyCheck(const sf::Vector2f& mpos)
+void Tree_Visualizer::Node::greedyCheck(const sf::Vector2f& mpos)
 {
     bool contains = (scalarDistance(mpos, circle.getPosition()) <= circle.getRadius());
     if (!highlighted && contains) {
@@ -101,7 +127,7 @@ void Tree::Node::greedyCheck(const sf::Vector2f& mpos)
     }
 }
 
-Tree::Node* Tree::Node::checkClick()
+Tree_Visualizer::Node* Tree_Visualizer::Node::checkClick()
 {
     Node* node { nullptr };
 
@@ -121,7 +147,7 @@ Tree::Node* Tree::Node::checkClick()
     return node;
 }
 
-void Tree::Node::setFillColor()
+void Tree_Visualizer::Node::setFillColor()
 {
     if (!highlighted && !selected) {
         circle.setFillColor(fill_color);
@@ -131,7 +157,7 @@ void Tree::Node::setFillColor()
     }
 }
 
-void Tree::Node::setTextColor()
+void Tree_Visualizer::Node::setTextColor()
 {
     if (!highlighted && !selected) {
         text.setFillColor(text_color);
@@ -141,7 +167,7 @@ void Tree::Node::setTextColor()
     }
 }
 
-void Tree::Node::setHiFillColor()
+void Tree_Visualizer::Node::setHiFillColor()
 {
     if (highlighted) {
         circle.setFillColor(hi_fill_color);
@@ -151,7 +177,7 @@ void Tree::Node::setHiFillColor()
     }
 }
 
-void Tree::Node::setHiTextColor()
+void Tree_Visualizer::Node::setHiTextColor()
 {
     if (highlighted) {
         text.setFillColor(hi_text_color);
@@ -161,7 +187,7 @@ void Tree::Node::setHiTextColor()
     }
 }
 
-void Tree::Node::setSelFillColor()
+void Tree_Visualizer::Node::setSelFillColor()
 {
     if (selected) {
         circle.setFillColor(sel_fill_color);
@@ -171,7 +197,7 @@ void Tree::Node::setSelFillColor()
     }
 }
 
-void Tree::Node::setSelTextColor()
+void Tree_Visualizer::Node::setSelTextColor()
 {
     if (selected) {
         text.setFillColor(sel_text_color);
@@ -181,7 +207,7 @@ void Tree::Node::setSelTextColor()
     }
 }
 
-void Tree::Node::setLineColor()
+void Tree_Visualizer::Node::setLineColor()
 {
     for (auto& line : child_lines) {
         line.setFillColor(line_color);
@@ -191,19 +217,19 @@ void Tree::Node::setLineColor()
     }
 }
 
-bool Tree::Node::isHighlighted()
+bool Tree_Visualizer::Node::isHighlighted()
 {
     return highlighted;
 }
 
-void Tree::Node::highlight()
+void Tree_Visualizer::Node::highlight()
 {
     highlighted = true;
     circle.setFillColor(hi_fill_color);
     text.setFillColor(hi_text_color);
 }
 
-void Tree::Node::unhighlight()
+void Tree_Visualizer::Node::unhighlight()
 {
     highlighted = false;
     if (!selected) {
@@ -216,14 +242,14 @@ void Tree::Node::unhighlight()
     }
 }
 
-void Tree::Node::select()
+void Tree_Visualizer::Node::select()
 {
     selected = true;
     circle.setFillColor(sel_fill_color);
     text.setFillColor(sel_text_color);
 }
 
-void Tree::Node::unselect()
+void Tree_Visualizer::Node::unselect()
 {
     selected = false;
     if (highlighted) {
@@ -234,7 +260,7 @@ void Tree::Node::unselect()
     }
 }
 
-void Tree::Node::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Tree_Visualizer::Node::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     for(unsigned short int i = 0; i < children.size(); ++i) {
         target.draw(child_lines[i], states);

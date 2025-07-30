@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
-// SHELL
+// NODE_INFO_DISPLAY
 // ----------
-// External abstraction layer for SFML programs.
+// Provides an info panel for displaying information from Tree_Visualizer::Node types.
 // Written by surfactants (https://github.com/surfactants).
 //
 // LICENSE: zlib (https://www.zlib.net/zlib_license.html)
@@ -27,24 +27,23 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <tree_visualizer.hpp>
+#include <string>
 
-class Shell {
+class Node_Info_Display : public sf::Drawable {
 public:
-    Shell();
-    void run();
+    Node_Info_Display() = default;
+    Node_Info_Display(sf::Font& font);
+
+    void set(std::string ntitle, std::string ntext);
+    void unset();
+
+    void setPosition(const sf::Vector2f& pos);
+    void setSize(const sf::Vector2f& size);
+
+    sf::RectangleShape frame;
+    sf::Text title;
+    sf::Text text;
 
 private:
-    void update();
-    void input();
-    void draw();
-
-    void randomColors();
-
-    sf::RenderWindow window;
-    sf::View view;
-    sf::Event event;
-    sf::Font font;
-
-    Tree_Visualizer tree;
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

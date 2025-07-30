@@ -1,4 +1,5 @@
 #include <database.hpp>
+
 #include <node_data.hpp>
 
 std::map<unsigned short int, Node_Data> Database::getNodes()

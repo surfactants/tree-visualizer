@@ -1,18 +1,46 @@
+////////////////////////////////////////////////////////////
+// TREE_VISUALIZER
+// ----------
+// N-ary tree visualizer.
+// Written by surfactants (https://github.com/surfactants).
+//
+// LICENSE: zlib (https://www.zlib.net/zlib_license.html)
+// -------
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <node_data.hpp>
-#include <string>
+#include <node_info_display.hpp>
+
+#include <SFML/Graphics.hpp>
+
 #include <map>
+#include <string>
 #include <vector>
-#include <tree_display.hpp>
 
-class Tree : public sf::Drawable{
+class Tree_Visualizer : public sf::Drawable{
 public:
-    Tree() = default;
-    Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::RenderWindow& nwindow);
+    Tree_Visualizer() = default;
+    Tree_Visualizer(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::View view);
 
-    void update();
+    void update(const sf::Vector2f& translated_mpos);
     void checkMouse(sf::Event& event);
 
     void setFrameColor(const sf::Color& c);
@@ -32,7 +60,14 @@ public:
     void setDisplayFrameColor(const sf::Color& c);
     void setDisplayTextColor(const sf::Color& c);
 
+    void setDisplayPosition(const sf::Vector2f& pos);
+    void setDisplaySize(const sf::Vector2f& size);
+
+    void setView(sf::View view);
+
     sf::Color node_color;
+
+    sf::View view;
 
 private:
     struct Node : public sf::Drawable{
@@ -93,14 +128,10 @@ private:
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     };
 
-    sf::RenderWindow* window { nullptr };
-
     Node* root;
 
     sf::RectangleShape frame;
     sf::Text title;
-
-    sf::View view;
 
     float zoom_level;
 
@@ -111,7 +142,7 @@ private:
 
     void drag();
 
-    Tree_Display display;
+    Node_Info_Display node_info_display;
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

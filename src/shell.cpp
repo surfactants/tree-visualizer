@@ -1,13 +1,37 @@
+////////////////////////////////////////////////////////////
+// SHELL
+// ----------
+// External abstraction layer for SFML programs.
+// Written by surfactants (https://github.com/surfactants).
+//
+// LICENSE: zlib (https://www.zlib.net/zlib_license.html)
+// -------
+// This software is provided 'as-is', without any express or implied
+// warranty.  In no event will the authors be held liable for any damages
+// arising from the use of this software.
+//
+// Permission is granted to anyone to use this software for any purpose,
+// including commercial applications, and to alter it and redistribute it
+// freely, subject to the following restrictions:
+//
+// 1. The origin of this software must not be misrepresented; you must not
+//    claim that you wrote the original software. If you use this software
+//    in a product, an acknowledgment in the product documentation would be
+//    appreciated but is not required.
+// 2. Altered source versions must be plainly marked as such, and must not be
+//    misrepresented as being the original software.
+// 3. This notice may not be removed or altered from any source distribution.
+//
+////////////////////////////////////////////////////////////
+
 #include <shell.hpp>
 
 #include <database.hpp>
-#include <iostream>
 #include <primordial.hpp>
 
 Shell::Shell()
     : window { sf::VideoMode(), "treeviz", sf::Style::Fullscreen, sf::ContextSettings(0, 0, 4) }
 {
-    std::cout << "window created, size " << window.getSize().x << ", " << window.getSize().y;
     font.loadFromFile("adventpro-bold.ttf");
 
     view.setSize(sf::Vector2f(window.getSize()));
@@ -17,7 +41,24 @@ Shell::Shell()
 
     std::map<unsigned short int, Node_Data> nodes = database.getNodes();
 
-    tree = Tree(font, nodes, window);
+    float xp = 0.05f,
+          yp = 0.1f,
+          xs = 0.7f,
+          ys = 0.8f;
+    sf::View tree_view;
+    tree_view.setViewport(sf::FloatRect(xp,yp,xs,ys));
+    tree_view.setSize(sf::Vector2f(window.getSize().x*xs, window.getSize().y*ys));
+    tree_view.setCenter(sf::Vector2f(0.f, 0.f));
+
+    tree = Tree_Visualizer(font, nodes, tree_view);
+
+    xp = 0.77f * window.getSize().x;
+    yp = 0.10f * window.getSize().y;
+    xs = 0.21f * window.getSize().x;
+    ys = 0.80f * window.getSize().y;
+
+    tree.setDisplayPosition(sf::Vector2f(xp, yp));
+    tree.setDisplaySize(sf::Vector2f(xs, ys));
 }
 
 void Shell::run()
@@ -31,7 +72,9 @@ void Shell::run()
 
 void Shell::update()
 {
-    tree.update();
+    const sf::Vector2i mpos = sf::Mouse::getPosition();
+    const sf::Vector2f tree_mpos = window.mapPixelToCoords(mpos, tree.view);
+    tree.update(tree_mpos);
 }
 
 void Shell::input()
