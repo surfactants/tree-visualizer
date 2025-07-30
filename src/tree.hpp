@@ -12,13 +12,52 @@ public:
     Tree() = default;
     Tree(sf::Font& font, std::map<unsigned short int, Node_Data> nodes, sf::RenderWindow& nwindow);
 
+    void update();
     void checkMouse(sf::Event& event);
 
-    void update();
+    void setFrameColor(const sf::Color& c);
+    void setTitleColor(const sf::Color& c);
+
+    void setNodeFillColor(const sf::Color& c);
+    void setNodeTextColor(const sf::Color& c);
+
+    void setNodeHiFillColor(const sf::Color& hc);
+    void setNodeHiTextColor(const sf::Color& hc);
+
+    void setNodeSelFillColor(const sf::Color& sc);
+    void setNodeSelTextColor(const sf::Color& sc);
+
+    void setLineColor(const sf::Color& c);
+
+    void setDisplayFrameColor(const sf::Color& c);
+    void setDisplayTextColor(const sf::Color& c);
+
+    sf::Color node_color;
 
 private:
     struct Node : public sf::Drawable{
         Node(sf::Font&, Node_Data ndata, std::map<unsigned short int, Node_Data>& nodes);
+
+        void placeChildren(sf::Vector2f pos, float angle = 0.f, float slice = 360.f);
+        void connectChildren();
+
+        void checkMouse(const sf::Vector2f& mpos);
+        void greedyCheck(const sf::Vector2f& mpos);
+
+        Node* checkClick();
+
+        void setFillColor();
+        void setTextColor();
+
+        void setHiFillColor();
+        void setHiTextColor();
+
+        void setSelFillColor();
+        void setSelTextColor();
+
+        void setLineColor();
+
+        bool isHighlighted();
 
         unsigned short int id;
 
@@ -30,37 +69,36 @@ private:
 
         std::string data;
 
-        void placeChildren(sf::Vector2f pos, float angle = 0.f, float slice = 360.f);
-        void connectChildren();
+        static sf::Color fill_color;
+        static sf::Color text_color;
 
-        void checkMouse(sf::Vector2f& mpos);
+        static sf::Color hi_fill_color;
+        static sf::Color hi_text_color;
 
-        bool isHighlighted();
+        static sf::Color sel_fill_color;
+        static sf::Color sel_text_color;
 
-        Node* checkClick();
+        static sf::Color line_color;
 
     private:
-        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-
-        bool highlighted{ false };
+        bool highlighted { false };
+        bool selected { false };
 
         void highlight();
         void unhighlight();
 
-        bool selected{ false };
-
         void select();
         void unselect();
+
+        virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     };
 
-    sf::RenderWindow* window{ nullptr };
+    sf::RenderWindow* window { nullptr };
 
     Node* root;
 
     sf::RectangleShape frame;
     sf::Text title;
-
-    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     sf::View view;
 
@@ -74,4 +112,6 @@ private:
     void drag();
 
     Tree_Display display;
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

@@ -1,24 +1,21 @@
 #include <database.hpp>
 #include <node_data.hpp>
 
-std::map<unsigned short int, Node_Data> Database::getNodes(){
+std::map<unsigned short int, Node_Data> Database::getNodes()
+{
     sqlite3* db = nullptr;
     sqlite3_open("tree.db", &db);
-
-    std::map<unsigned short int, Node_Data> nodes;
-
     sqlite3_stmt* statement;
-
     std::string sql = "SELECT * FROM 'NODES'";
+    std::map<unsigned short int, Node_Data> nodes;
 
     int rc = sqlite3_prepare_v2(db, sql.c_str(), sql.length(), &statement, NULL);
 
-    while((rc = sqlite3_step(statement)) == SQLITE_ROW){
+    while((rc = sqlite3_step(statement)) == SQLITE_ROW) {
         nodes.insert(readNode(statement));
     }
 
     sqlite3_finalize(statement);
-
     sqlite3_close(db);
 
     return nodes;
@@ -37,10 +34,12 @@ std::pair<unsigned short int, Node_Data> Database::readNode(sqlite3_stmt* statem
     std::string child_string = reinterpret_cast<const char*>(sqlite3_column_text(statement, column++));
     std::vector<unsigned short int> children;
 
-    if(child_string.length() > 0){
-        while(child_string.find(' ') != std::string::npos){
-            children.push_back(std::stoi(child_string.substr(0, child_string.find(' '))));
-            child_string = child_string.substr(child_string.find(' ') + 1);
+    if (child_string.length() > 0) {
+        size_t space;
+        while((space = child_string.find(' ')) != std::string::npos) {
+            int datum = std::stoi(child_string.substr(0, space));
+            children.push_back(datum);
+            child_string = child_string.substr(space + 1);
         }
 
         children.push_back(std::stoi(child_string));

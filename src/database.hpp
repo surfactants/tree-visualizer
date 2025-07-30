@@ -4,8 +4,10 @@
 #include <map>
 #include <sqlite/sqlite3.h>
 
-class Database{
+class Database {
 public:
+    Database() = default;
+
     std::map<unsigned short int, Node_Data> getNodes();
 
 private:

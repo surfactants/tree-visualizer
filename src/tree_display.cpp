@@ -3,7 +3,7 @@
 
 //////////////////////////////////////////////
 Tree_Display::Tree_Display(sf::Font& nfont, sf::RenderWindow& window)
-: font{ &nfont }
+: font { &nfont }
 {
 
     float xp = 0.77f * window.getSize().x,
@@ -31,13 +31,6 @@ Tree_Display::Tree_Display(sf::Font& nfont, sf::RenderWindow& window)
     unset();
 }
 
-void Tree_Display::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-    target.draw(frame, states);
-    target.draw(title, states);
-    target.draw(text, states);
-}
-
 void Tree_Display::set(std::string ntitle, std::string ntext)
 {
     title.setString(ntitle);
@@ -50,4 +43,11 @@ void Tree_Display::unset()
 {
     title.setString("...");
     text.setString("select a node to learn more");
+}
+
+void Tree_Display::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    target.draw(frame, states);
+    target.draw(title, states);
+    target.draw(text, states);
 }

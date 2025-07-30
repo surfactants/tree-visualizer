@@ -1,5 +1,14 @@
 ////////////////////////////////////////////////////////////
+// PRIMORDIAL
+// ----------
+// Provides a variety of basic math functions (and also wrapText in this distribution for some reason)
 //
+// Written by surfactants (https://github.com/surfactants)
+//
+// Please note that this header defines PI in the global namespace.
+//
+// LICENSE
+// -------
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
 //
@@ -21,94 +30,64 @@
 
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Text.hpp>
+
+#include <cmath>
 #include <math.h>
 
-#define PI 3.14159265359
+constexpr static float PI { 3.14159265359 };
 
-/////////////////////////////////////////////////////////////
-/// \brief
+/// roundFloat ///
+/// \brief Rounds a float to the nearest integer
 ///
-sf::Color randomColor(unsigned int alpha);
+int roundFloat(float f);
 
-/////////////////////////////////////////////////////////////
-/// \brief
+/// scalarDistance ///
+/// \brief Returns the scalar distance between two Vector2<T> (Pythagorean theorem).
 ///
-sf::Color randomColor();
-
-/////////////////////////////////////////////////////////////
-/// \brief
-///
-void centerText(sf::Text& text);
-
-sf::FloatRect getViewBounds(const sf::View& view);
-
-/////////////////////////////////////////////////////////////
-/// \brief Returns the scalar distance between two 2d vectors.
-///
-template<typename T>
-T scalarDistance(const sf::Vector2<T> v, sf::Vector2<T> const w){
-    T a = std::abs(w.x - v.x);
-    T b = std::abs(w.y - v.y);
-    return static_cast<T>(sqrt(pow(a, 2) + pow(b, 2)));
+template <typename T>
+T scalarDistance(const sf::Vector2<T> v, const sf::Vector2<T> w)
+{
+    const T a = std::abs(w.x - v.x);
+    const T b = std::abs(w.y - v.y);
+    return static_cast<T>(std::sqrt(pow(a, 2) + pow(b, 2)));
 }
 
-/////////////////////////////////////////////////////////////
-/// \brief Returns the 2d vector distance between two 2d vectors.
+/// vectorDistance ///
+/// \brief Distance between two Vector2<T> (simple subtraction).
 ///
-template<typename T>
-sf::Vector2<T> vectorDistance(const sf::Vector2<T> v, const sf::Vector2<T> w){
+template <typename T>
+sf::Vector2<T> vectorDistance(const sf::Vector2<T> v, const sf::Vector2<T> w)
+{
     return sf::Vector2<T>(w.x - v.x, w.y - v.y);
 }
 
-template<typename T>
-double calculateOrientation(sf::Vector2<T> v){
-    double t = atan((double)v.y / (double)v.x);
-
-    t *= 180.d/PI;
-
-    if(v.x > 0) t += 90;
-    else if(v.y < 0) t += 270;
-
-    return t;
-}
-
-template<typename T>
-double calculateOrientation(sf::Vector2<T> v, sf::Vector2<T> w){
-    return calculateOrientation(w - v);
-}
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Calculates the angle needed to point an object towards
-    /// another object or point.
-    ///
-    /// \param \b pos1
-    /// \param \b pos2
-    ///
-    /// \return \b theta in degrees
-    ///
-    /// \see calculateDistance(), calculateMovementVector(), calculateVelocity()
-    ///
-    float calculateAngle(sf::Vector2f pos1, sf::Vector2f pos2);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Defines a movement vector based on speed and angle.
-    ///
-    /// \param \b angle in degrees
-    /// \param \b velocity
-    /// \param \b moveVector a reference to an object's movement vector
-    ///
-    /// \see calculateOrientation(), calculateDistance(), calculateVelocity()
-    ///
-    sf::Vector2f calculateMoveVector(float angle, float velocity);
-    sf::Vector2f calculateMoveVector(sf::Vector2f start, sf::Vector2f end, float speed);
-
-template<typename T>
-T scalarProduct(const sf::Vector2<T>& v, const sf::Vector2<T>& w)
+/// sign ///
+/// \brief Tests the sign of val. Returns +1 if positive, -1 if negative, and 0 if val is 0.
+///
+template <typename T>
+int sign(T val)
 {
-    return ((v.x * w.x) + (v.y * w.y));
+    return (T(0) < val) - (val < T(0));
 }
 
-int roundFloat(float f);
+/// calculateMoveVector ///
+/// \brief
+///
+sf::Vector2f calculateMoveVector(float angle, float velocity);
 
+/// wrapText ///
+/// \brief Introduces newline characters to a text object to fit it within the passed width.
+///
 void wrapText(sf::Text& text, int width);
+
+void centerText(sf::Text& text);
+
+float calculateAngle(const sf::Vector2f& v, const sf::Vector2f& w);
+
+/////////////////////////////////////////////////////////////
+/// \brief
+///
+sf::Color randomColor(const unsigned int alpha);
+sf::Color randomColor();
